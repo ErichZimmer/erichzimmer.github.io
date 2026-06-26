@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Erich Zimmer</title>
+    <meta name="description" content="A static GitHub Pages site for research, blogs, and PIV utilities.">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Site sidebar">
+            <div data-component="header"></div>
+            <div data-component="nav"></div>
+            <div class="sidebar-spacer" aria-hidden="true"></div>
+            <div data-component="footer"></div>
+        </aside>
+
+        <main id="app" class="content" tabindex="-1" aria-live="polite">
+            <section class="center-zone">
+                <article class="panel loading-panel">
+                    <p class="eyebrow">Loading</p>
+                    <h1>Preparing the site...</h1>
+                    <p>Components and markdown modules are loading.</p>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <noscript>
+        <main class="content no-script">
+            <article class="panel">
+                <h1>JavaScript is required</h1>
+                <p>This GitHub Pages site renders markdown files in the browser and needs JavaScript enabled.</p>
+            </article>
+        </main>
+    </noscript>
+
+    <script type="module" src="./modules/app.js"></script>
+</body>
+
+</html>
