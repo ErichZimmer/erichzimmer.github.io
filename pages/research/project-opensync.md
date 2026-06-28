@@ -37,3 +37,5 @@ Additionally,
  - Each clock can add delay between external trigger signal and pulse sequence signal
  - Each clock can be gated to an external trigger
  - Internal clocks and pulse sequncers can have different clock dividers
+
+ For more info, visit the OpenSYnc Github page [here](https://github.com/ErichZimmer/OpenSync/tree/main).

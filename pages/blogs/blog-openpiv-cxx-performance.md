@@ -71,7 +71,7 @@ The effect on particle diameter on interpolation quality is also visualized belo
 ![lancos and sinc kernel k=3 size test](/pages/blogs/assets/interp_symnmetric_bias_k3_particle_size.png)
 
 ### Cross Correlation
-To analyze the performance of the new enhancements to the c++ version of OpenPIV, a basic recreation of the benchmark tests performed by William Thielicke at Optolution had been performed. The results of his benchmark on the performance of PIVlab can be seen [here](https://pivlab.blogspot.com/2019/09/evaluation-of-new-pivlab-v21-settings.html). A series of 8 batches of PIV images, each containing 500 image pairs, were created to test the effects of noise, particle loss, particle size, and displacements on PIV images. Each batch is characterized in the table below. Batches without a specified particle density are assumed to have a particles per pixels (ppp) ratio of 0.05.
+To analyze the performance of the new enhancements to the c++ version of OpenPIV, a basic recreation of the benchmark tests performed by William Thielicke at Optolution had been performed. The results of his benchmark on the performance of PIVlab can be seen [here](https://pivlab.blogspot.com/2019/09/evaluation-of-new-pivlab-v21-settings.html). A series of 8 batches of PIV images, each containing 500 image pairs, were created to test the effects of noise, particle loss, particle size, and displacements on PIV images. Each batch is characterized in the table below. Batches without a specified particle density are assumed to have a particles per pixel (ppp) ratio of 0.05 and mean particle diamter of 3 pixels.
 
 | Batch # | Test Type | Conditions |
 | --- | --- | --- |
