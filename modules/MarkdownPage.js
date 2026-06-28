@@ -337,9 +337,9 @@ export default class MarkdownPage {
         });
 
         text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+//        text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
         text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-        text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+//        text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
 
         code.forEach((html, index) => {
             text = text.replace(`@@CODE_${index}@@`, html);
