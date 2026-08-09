@@ -19,6 +19,12 @@ OpenSync is the first hardware project in this line of work which targets the ti
 ### OpenLDS
 OpenLDS is a pulsed laser diode system (LDS) aimed towards providing a relatively high energy light sheet for flow measurement applications. With a peak power of around 1,200 Watts with >1,000 Watts usable energy, it can produce pulse energies of 1 mJ at 1 microsecond pulses to 75 mJ at 75 microsecond pulses with up to a 15% duty cycle. Light sheet thickness is excpected to be around 2-3 mm at 1 m focus distance due to individual laser diode alignment unless a spatial slit filter is used to block unwanted light.
 
+### OpenLPS
+OpenLPS is a pulsed light emitting diode (LED) system aimed towards providing a high intensity, non-coherent light for fluid measurement applications. Since LEDs are lambertian (basically a point source with high divergence), significant eye hazards that are present with lasers are effectively minimized. OpenLPS would have the ability to change LED bulbs with support for UV, deep blue, blue, green, converted green (CG), red, and white wavelengths. Fiber coupling would also be supported to bundle the LED light into a relatively thin and safe light sheet. Peak LED power for blue wavelengths would be around 40 W CW and 50 to 60 W pulsed. Pulse lengths may range from 250 ns to CW with duty cycles of less than 25% for pulsed modes.
+
+### OpenVLS
+OpenVLS is a pulsed 5x15 LED array made for the illumination of volumes. Similar to OpenLPS, it would support UV, deep blue, blue, green, converted green (CG), red, and white wavelengths. Due to the dense packing of the LEDs, 450 W CW or 750 W pulsed radiant energy for blue wavelengths illuminate a 100 mm x 300 mm area. Multiple OpenVLS units can be seemlessly stacked to produce a large, uniform, and high energy volume illumination source. Pulse lengths can range from 250 ns to CW with up to 25% duty cycles, similar to OpenLPS.
+
 ### OpenCIT
 OpenCIT, or open hardware camera interframe tester, is a super simple camera interframe and exposure delay tester based on the OpenSync synchronizer. Using a 3D printed testing rig, a camera w/ lens can be attached to the rig via a tripod mound and the delay to first exposure and blind time between two images can be empiracally found. This allows for the suitability of different cameras to be tested and the most appropriate camera utilized for an experiment
 
