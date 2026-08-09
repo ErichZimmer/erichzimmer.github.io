@@ -1,6 +1,6 @@
 ---
 title: "Upcoming OpenPIV c++ Optimizations"
-date: "2026-06-24"
+date: "2026-08-09"
 tags:
   - PIV
   - Software
@@ -56,7 +56,7 @@ Another area of optimization are interpolation algorithms. Interpolation kernels
 ### Interpolation
 As seen below, the increasing the interpolation order decreases error at the expense of computational complexity. For clarification, all units are in pixels for all images plotting errors.
 
-![lagrange interpolation errors by interp order](/pages/blogs/assets/interp_comparison_symmetric_bias.png)
+![lagrange interpolation errors by interp order](/pages/blogs/assets/_lagrange_symmetric_ideal.png)
 
 As a sanity check, the interpolation errors are also checked against SciPy's bspline interpolation algorithm (ndimage.map_coordinates) which was used as a baseline throughout development.
 
@@ -66,22 +66,94 @@ In comparison to OpenPIV-Python, two other interpolation algorithms were impleme
 
 ![lanczos and sinc kernel weights for k=3](/pages/blogs/assets/kernel_weights_sinc_k3.png)
 
-The effect on particle diameter on interpolation quality is also visualized below.
-
-![lancos and sinc kernel k=3 size test](/pages/blogs/assets/interp_symnmetric_bias_k3_particle_size.png)
 
 ### Cross Correlation
-To analyze the performance of the new enhancements to the c++ version of OpenPIV, a basic recreation of the benchmark tests performed by William Thielicke at Optolution had been performed. The results of his benchmark on the performance of PIVlab can be seen [here](https://pivlab.blogspot.com/2019/09/evaluation-of-new-pivlab-v21-settings.html). A series of 8 batches of PIV images, each containing 500 image pairs, were created to test the effects of noise, particle loss, particle size, and displacements on PIV images. Each batch is characterized in the table below. Batches without a specified particle density are assumed to have a particles per pixel (ppp) ratio of 0.05 and mean particle diamter of 3 pixels.
+To analyze the performance of the new enhancements to the c++ version of OpenPIV, a basic recreation of the benchmark tests performed by William Thielicke at Optolution had been performed. The results of his benchmark on the performance of PIVlab can be seen [here](https://pivlab.blogspot.com/2019/09/evaluation-of-new-pivlab-v21-settings.html). A series of 9 batches of PIV images, each containing 500 image pairs, were created to test the effects of noise, particle size, and displacements on PIV images. Each batch is characterized in the table below. Batches without a specified particle density are assumed to have a particles per pixel (ppp) ratio of 0.05 and mean particle diamter of 3 pixels.
 
 | Batch # | Test Type | Conditions |
 | --- | --- | --- |
-| Batch 1 | Displacement test | 0% particle loss, 0% noise |
-| Batch 2 | Displacement test | 5% particle loss, 5% noise |
-| Batch 3 | Displacement test | 10% particle loss, 10% noise |
-| Batch 4 | Displacement test | 15% particle loss, 15% noise |
-| Batch 5 | Displacement test | 20% particle loss, 20% noise |
-| Batch 6 | Noise test | 0% noise to 25% noise |
-| Batch 7 | Particle size test | 0 pixels to 5 pixels |
-| Batch 8 | Particle density test | 0 ppp to 0.2 ppp |
+| Batch 1 | Particle size test | 0 pixels to 10 pixels; 2.5 pixels displacement |
+| Batch 2 | Noise test | 0% noise to 25% noise; 2.5 pixels displacement |
+| Batch 3 | Particle density test | 0 ppp to 0.2 ppp; 2.5 pixels displacement |
+| Batch 4 | Displacement test | 0% particle loss; 0-5 pixels displacement |
+| Batch 5 | Displacement test | 5% particle loss; 0-5 pixels displacement |
+| Batch 6 | Displacement test | 10% particle loss; 0-5 pixels displacement |
+| Batch 7 | Displacement test | 15% particle loss; 0-5 pixels displacement |
+| Batch 8 | Displacement test | 20% particle loss; 0-5 pixels displacement |
+| Batch 9 | Displacement test | 25% particle loss; 0-5 pixels displacement |
 
-### Note, test is still in progress at the moment and won't be analyzed until July 5th due to time constraints...
+During the tests, some amends were made. For one, particle diameters had a standard deviation of zero for test batches one through three so minimize variables. Batches four to nine still have a standard deviation of one pixel (e.g., particle sizes of 3 +/- 1 pixels). Finally, particle loss was removed from the noise tests due to certain concerns observed during the results, which seemed to not be a problem.
+
+## PIV Settings
+Note: No preprocessing or postprocessing was done on any image pair.
+
+PIVlab (normal):
+| Setting | Value |
+| --- | --- |
+| IW Sizes | 64 -> 32 -> 24 |
+| Overlap Sizes | 32 -> 16 -> 12 |
+| Zero Padding | None |
+| Interpolation | Linear |
+| Interp Order | 1 (forward) |
+
+PIVlab (normal):
+| Setting | Value |
+| --- | --- |
+| IW Sizes | 64 -> 32 -> 24 |
+| Overlap Sizes | 32 -> 16 -> 12 |
+| Zero Padding | 2N - 1 |
+| Interpolation | Spline (k=3) |
+| Interp Order | 1 (forward) |
+
+OpenPIV (circular)
+| Setting | Value |
+| --- | --- |
+| IW Sizes | 64 -> 32 -> 24 |
+| Overlap Sizes | 32 -> 16 -> 12 |
+| Zero Padding | None |
+| Interpolation | Lagrange (k=3) |
+| Interp Order | 2 (symmetric) |
+
+OpenPIV (linear)
+| Setting | Value |
+| --- | --- |
+| IW Sizes | 64 -> 32 -> 24 |
+| Overlap Sizes | 32 -> 16 -> 12 |
+| Zero Padding | 2N |
+| Interpolation | Lagrange (k=3) |
+| Interp Order | 2 (symmetric) |
+
+### Results
+The results from the benchmark can be seen below. An immediate difference can be seen between OpenPIV-cxx's symmetric deformation and PIVlab's forward deformation. This is especially noticable on tests 1-3 where the particle displacement is located at the peak error of the interpolation's frequency response whereas forward deformation has a minimum error at this displacement. When using forward deformation for OpenPIV-cxx, tests 1-3 converge quite neatly showing the effectiveness of the lagrange interpolation as a substitute to basis splines. In general, zero padding the interrogation windows to remove periodic signals from the fast fourier transforms decreased bias and RMS errors. This can also be seen in PIVlab's `high` setting. As such, the c++ implementation appears to be in agreement with PIVlab (which is sometimes more accurate/precise than commercial software) in regards to this specific benchmark suite. Finally, a the time per vector for PIVlab, OpenPIV-cxx (without SIMD optimizations), and the venerable PIVview software can be seen in the final figure. 
+
+![test 1 bias](/pages/blogs/assets/test_1_bias.png)
+![test 1 rmse](/pages/blogs/assets/test_1_rmse.png)
+
+![test 2 bias](/pages/blogs/assets/test_2_bias.png)
+![test 2 rmse](/pages/blogs/assets/test_2_rmse.png)
+
+![test 3 bias](/pages/blogs/assets/test_3_bias.png)
+![test 3 rmse](/pages/blogs/assets/test_3_rmse.png)
+
+![test 4 bias](/pages/blogs/assets/test_4_bias.png)
+![test 4 rmse](/pages/blogs/assets/test_4_rmse.png)
+
+![test 5 bias](/pages/blogs/assets/test_5_bias.png)
+![test 5 rmse](/pages/blogs/assets/test_5_rmse.png)
+
+![test 6 bias](/pages/blogs/assets/test_6_bias.png)
+![test 6 rmse](/pages/blogs/assets/test_6_rmse.png)
+
+![test 7 bias](/pages/blogs/assets/test_7_bias.png)
+![test 7 rmse](/pages/blogs/assets/test_7_rmse.png)
+
+![test 8 bias](/pages/blogs/assets/test_8_bias.png)
+![test 8 rmse](/pages/blogs/assets/test_8_rmse.png)
+
+![test 9 bias](/pages/blogs/assets/test_9_bias.png)
+![test 9 rmse](/pages/blogs/assets/test_9_rmse.png)
+
+![test 9 bias](/pages/blogs/assets/test_execution_time_serial.png)
+![test 9 rmse](/pages/blogs/assets/test_execution_time_parallel.png)
+
+A notable mention should be made for the parallel tests. PIVlab used 8 parallel processes (workers) which each processing their own image pairs. This is the most efficient form of distributed processing for PIV images that are not time-resolved. Contrarily, PIVview and OpenPIV-cxx used multithreading with 15 threads processing the same image pair. This is a lot less efficient compared to distributed processing, as seen in PIVlab's performance. Finally, the correlation algorithms in OpenPIV-cxx would need to be profiled since circular correlation (no zero padding) performs at the same level as linear correlation (with zero padding). This should not be the case.
