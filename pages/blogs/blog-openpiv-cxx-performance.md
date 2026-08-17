@@ -135,6 +135,8 @@ PIVview
 ### Results
 The results from the benchmark can be seen below. An immediate difference can be seen between OpenPIV-cxx's symmetric deformation and PIVlab's forward deformation. This is especially noticable on tests 1-3 where the particle displacement is located at the peak error of the interpolation's frequency response whereas forward deformation has a minimum error at this displacement. When using forward deformation for OpenPIV-cxx, tests 1-3 converge quite neatly showing the effectiveness of the lagrange interpolation as a substitute to basis splines. In general, zero padding the interrogation windows to remove periodic signals from the fast fourier transforms decreased bias and RMS errors. This can also be seen in PIVlab's `high` setting. As such, the c++ implementation appears to be in agreement with PIVlab (which is sometimes more accurate/precise than commercial software) in regards to this specific benchmark suite. Finally, a the time per vector for PIVlab, OpenPIV-cxx (with FFT SIMD optimizations), and the venerable PIVview software can be seen in the final figure. Through these benchmarks, many optimizations have been made to OpenPIV-cxx to improve its memory efficiency, thus improving it's performance significantly and to the level of Matlab optimizations.
 
+![test disp bias](/pages/blogs/assets/test_mean_absolute_bias.png)
+
 ![test 1 bias](/pages/blogs/assets/test_1_bias.png)
 ![test 1 rmse](/pages/blogs/assets/test_1_rmse.png)
 
