@@ -38,7 +38,7 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | Output Impedance              | ~50 Ohms                               |
 | Output Rise/Fall              | < 4 ns                                 |
 | **Channel Timing Generator**  |                                        |
-| Pulse Range                   | 28 ns to 10 s Clock Divider            |
+| Pulse Range                   | 44 ns to 10 s Clock Divider            |
 | Resolution                    | 4 ns Clock Divider                     |
 | Accuracy                      | 4 ns Clock Divider                     |
 | Clock Divider Range           | 1 to 65,500                            |
@@ -48,14 +48,14 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | Triggering                    | T0, CH A-H, Gated                      |
 | Counter Depths                | 32 Bits                                |
 | Delay Counter Depth           | 31 Bits (1 bit used for output state)  |
-| Output State/Delay Buffer     | 7 Output State/Delay Pairs             |
+| Output State/Delay Buffer     | 6 Output State/Delay Pairs             |
 | Output Voltage                | 3.3 V or 5 V                           |
 | Output Impedance              | ~50 Ohms                               |
 | Output Rise/Fall              | < 4 ns                                 |
 | **Miscellaneous**             |                                        |
 | Output Channels               | 8 Independent Channels                 |
 | Input Channels                | 2 (1 Ext. Trigger; 1 Gate)             |
-| Min. Trigger Length           | 8 ns Clock Divider                     |
+| Min. Trigger Length           | 12 ns Clock Divider                     |
 | Trigger Jitter                | 4 ns Clock Divider                     |
 | Trigger to Output Delay       | 28 ns Clock Divider                    |
 
