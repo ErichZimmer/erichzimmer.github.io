@@ -19,23 +19,154 @@ At the core of OpenSync is the RP2350 microcontroller from the Raspberry Pi Foun
 
 OpenSync provides enough features to suite the needs of most users in the research community. For instance, see below.
 
-|  |  |
-| --- | --- |
-| Timing Resolution | 4 ns, 8 ns, 20 ns, 100 ns, 1 us |
-| Pulse Range | 20 ns to 5,000 s |
-| Pulse Frequency | 0.0004 Hz to 1.9 MHz |
-| Single-channel Jitter | < 0.1 ns |
-| Inter-channel Jitter | <0.3 ns |
-| Triggering | Internal, External, Gated |
-| Output Voltage | 5 V |
-| Output Impedance | 50 Ohms |
+<table>
+  <tr>
+    <th colspan="2">Internal Timing Generator</th>
+  </tr>
+  <tr>
+    <td>Period Range</td>
+    <td>0.0004 Hz to 5 MHz</td>
+  </tr>
+  <tr>
+    <td>Resolution</td>
+    <td>4 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Accuracy</td>
+    <td>4 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>PLL Frequency</td>
+    <td>250 MHz</td>
+  </tr>
+  <tr>
+    <td>Crystal Oscillator</td>
+    <td>12 MHz 30 ppm</td>
+  </tr>
+  <tr>
+    <td>Clock Divider Range</td>
+    <td>1 to 65,500</td>
+  </tr>
+  <tr>
+    <td>Jitter</td>
+    <td>Usually < 0.1 ns</td>
+  </tr>
+  <tr>
+    <td>Modes</td>
+    <td>Normal, Single Shot, Burst, Duty Cycle</td>
+  </tr>
+  <tr>
+    <td>Triggering</td>
+    <td>Internal, External, Gated</td>
+  </tr>
+  <tr>
+    <td>Counter Depths</td>
+    <td>32 Bits</td>
+  </tr>
+  <tr>
+    <td>Outputs</td>
+    <td>T0 Event Out</td>
+  </tr>
+  <tr>
+    <td>Pulse Duration</td>
+    <td>20 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Output Voltage</td>
+    <td>3.3 V or 5 V</td>
+  </tr>
+  <tr>
+    <td>Output Impedance</td>
+    <td>~50 Ohms</td>
+  </tr>
+  <tr>
+    <td>Output Rise/Fall</td>
+    <td>< 4 ns</td>
+  </tr>
 
-Additionally, 
- - Three (3) independent clocks mapped to all 8 output channels
- - Variable timing for each internal clock
- - Each clock can skip certain number of external triggers
- - Each clock can add delay between external trigger signal and pulse sequence signal
- - Each clock can be gated to an external trigger
- - Internal clocks and pulse sequncers can have different clock dividers
+  <tr>
+    <th colspan="2">Channel Timing Generator</th>
+  </tr>
+  <tr>
+    <td>Pulse Range</td>
+    <td>28 ns to 10 s * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Resolution</td>
+    <td>4 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Accuracy</td>
+    <td>4 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Clock Divider Range</td>
+    <td>1 to 65,500</td>
+  </tr>
+  <tr>
+    <td>Single-channel Jitter</td>
+    <td>Usually < 0.1 ns</td>
+  </tr>
+  <tr>
+    <td>Inter-channel Jitter</td>
+    <td>Usually < 0.4 ns</td>
+  </tr>
+  <tr>
+    <td>Modes</td>
+    <td>Normal, Single Shot, Burst, Duty Cycle</td>
+  </tr>
+  <tr>
+    <td>Triggering</td>
+    <td>T0, CH A-H, Gated</td>
+  </tr>
+  <tr>
+    <td>Counter Depths</td>
+    <td>32 Bits</td>
+  </tr>
+  <tr>
+    <td>Delay Counter Depth</td>
+    <td>31 Bits (1 bit used for outptu state)</td>
+  </tr>
+  <tr>
+    <td>Output State/Delay Buffer</td>
+    <td>7 Output State/Delay Pairs</td>
+  </tr>
+  <tr>
+    <td>Output Voltage</td>
+    <td>3.3 V or 5 V</td>
+  </tr>
+  <tr>
+    <td>Output Impedance</td>
+    <td>~50 Ohms</td>
+  </tr>
+  <tr>
+    <td>Output Rise/Fall</td>
+    <td>< 4 ns</td>
+  </tr>
+  <tr>
+    <th colspan="2">Miscellaneous</th>
+  </tr>
+  <tr>
+    <td>Output Channels</td>
+    <td>8 Independent Channels</td>
+  </tr>
+  <tr>
+    <td>Input Channels</td>
+    <td>2 (1 Ext. Trigger; 1 Gate)</td>
+  </tr>
+  <tr>
+    <td>Min. Trigger Length</td>
+    <td>8 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Trigger Jitter</td>
+    <td>4 ns * Clock Divider</td>
+  </tr>
+  <tr>
+    <td>Trigger to Output Delay</td>
+    <td>28 ns * Clock Divider</td>
+  </tr>
+</table>
+
 
  For more info, visit the OpenSYnc Github page [here](https://github.com/ErichZimmer/OpenSync/tree/main).

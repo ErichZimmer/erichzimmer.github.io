@@ -27,7 +27,7 @@ Deformation
 Cross Correlation
  - circular
  - linear
- - normalized square error (work in progress; currently c++ only)
+ - normalized square error (currently c++ only)
 Peak Search
  - 2 peaks
  - 3 peaks (currently c++ only)
@@ -167,4 +167,4 @@ The results from the benchmark can be seen below. An immediate difference can be
 ![time test serial](/pages/blogs/assets/test_execution_time_serial.png)
 ![time test parallel](/pages/blogs/assets/test_execution_time_parallel.png)
 
-A notable mention should be made for the parallel tests. PIVlab used 8 parallel processes (workers) which each processing their own image pairs. This is the most efficient form of distributed processing for PIV images that are not time-resolved. Contrarily, PIVview and OpenPIV-cxx used multithreading with 8 threads processing the same image pair. This is a lot less efficient compared to distributed processing, as seen in PIVlab's performance.
+A notable mention should be made for the parallel tests. PIVlab used 8 parallel processes (workers) with each processing their own image pairs. This is the most efficient form of distributed processing for PIV images that are not time-resolved. Contrarily, PIVview and OpenPIV-cxx used multithreading with 8 threads processing the same image pair. This is a lot less efficient compared to distributed processing, as seen in PIVlab's performance.
