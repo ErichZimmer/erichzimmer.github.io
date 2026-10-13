@@ -23,13 +23,12 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | ----------------------------- | -------------------------------------- |
 | **Internal Timing Generator** |                                        |
 | Period Range                  | 0.0004 Hz to 5 MHz                     |
-| Resolution                    | 4 ns Clock Divider                     |
-| Accuracy                      | 4 ns Clock Divider                     |
+| Resolution                    | 4 ns * Clock Divider                   |
+| Accuracy                      | 4 ns * Clock Divider                   |
 | PLL Frequency                 | 250 MHz                                |
 | Crystal Oscillator            | 12 MHz 30 ppm                          |
 | Clock Divider Range           | 1 to 65,500                            |
 | Jitter                        | Usually < 0.1 ns                       |
-| Modes                         | Normal, Single Shot, Burst, Duty Cycle |
 | Triggering                    | Internal, External, Gated              |
 | Counter Depths                | 32 Bits                                |
 | Outputs                       | T0 Event Out                           |
@@ -38,13 +37,12 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | Output Impedance              | ~50 Ohms                               |
 | Output Rise/Fall              | < 4 ns                                 |
 | **Channel Timing Generator**  |                                        |
-| Pulse Range                   | 44 ns to 10 s Clock Divider            |
-| Resolution                    | 4 ns Clock Divider                     |
-| Accuracy                      | 4 ns Clock Divider                     |
+| Pulse Range                   | 44 ns to 10 s * Clock Divider          |
+| Resolution                    | 4 ns * Clock Divider                   |
+| Accuracy                      | 4 ns * Clock Divider                   |
 | Clock Divider Range           | 1 to 65,500                            |
 | Single-channel Jitter         | Usually < 0.1 ns                       |
 | Inter-channel Jitter          | Usually < 0.4 ns                       |
-| Modes                         | Normal, Single Shot, Burst, Duty Cycle |
 | Triggering                    | T0, CH A-H, Gated                      |
 | Counter Depths                | 32 Bits                                |
 | Delay Counter Depth           | 31 Bits (1 bit used for output state)  |
@@ -55,10 +53,8 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | **Miscellaneous**             |                                        |
 | Output Channels               | 8 Independent Channels                 |
 | Input Channels                | 2 (1 Ext. Trigger; 1 Gate)             |
-| Min. Trigger Length           | 12 ns Clock Divider                     |
-| Trigger Jitter                | 4 ns Clock Divider                     |
-| Trigger to Output Delay       | 28 ns Clock Divider                    |
-
-
+| Min. Trigger Length           | 12 ns * Clock Divider                  |
+| Trigger Jitter                | 4 ns * Clock Divider                   |
+| Trigger to Output Delay       | 28 ns * Clock Divider                  |
 
  For more info, visit the OpenSYnc Github page [here](https://github.com/ErichZimmer/OpenSync/tree/main).
