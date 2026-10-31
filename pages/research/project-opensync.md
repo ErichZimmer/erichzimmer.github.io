@@ -31,11 +31,7 @@ OpenSync provides enough features to suite the needs of most users in the resear
 | Jitter                        | Usually < 0.1 ns                       |
 | Triggering                    | Internal, External, Gated              |
 | Counter Depths                | 32 Bits                                |
-| Outputs                       | T0 Event Out                           |
 | Pulse Duration                | 20 ns * Clock Divider                  |
-| Output Voltage                | 3.3 V or 5 V                           |
-| Output Impedance              | ~50 Ohms                               |
-| Output Rise/Fall              | < 4 ns                                 |
 | **Channel Timing Generator**  |                                        |
 | Pulse Range                   | 44 ns to 10 s * Clock Divider          |
 | Resolution                    | 4 ns * Clock Divider                   |

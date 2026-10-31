@@ -8,6 +8,10 @@ export default class MarkdownPage {
         const parsed = MarkdownPage.parseFrontMatter(raw);
         this.frontMatter = parsed.frontMatter;
         this.content = parsed.content;
+        this.html = null;
+        this.cachedWordCount = null;
+        this.cachedReadingTime = null;
+        this.markdownURL = url.replace(/\.html$/i, '.md');
     }
 
     static async fromURL(url) {
@@ -18,13 +22,28 @@ export default class MarkdownPage {
         }
 
         const raw = await response.text();
+
         return new MarkdownPage({ url, raw });
+    }
+
+    static fromMetadata(metadata, basePath) {
+        const page = new MarkdownPage({
+            url: `${basePath}/${metadata.file}`,
+            slug: metadata.slug
+        });
+        page.frontMatter = metadata;
+        page.cachedWordCount = metadata.wordCount ?? null;
+        page.cachedReadingTime = metadata.readingTimeMinutes ?? null;
+        page.markdownURL = `${basePath}/${metadata.source || metadata.file.replace(/\.html$/i, '.md')}`;
+        
+        return page;
     }
 
     static slugFromUrl(url = '') {
         const clean = url.split('?')[0].split('#')[0];
         const fileName = clean.substring(clean.lastIndexOf('/') + 1);
-        return fileName.replace(/\.(md|markdown)$/i, '');
+
+        return fileName.replace(/\.(md|markdown|html)$/i, '');
     }
 
     static parseFrontMatter(raw = '') {
@@ -41,6 +60,7 @@ export default class MarkdownPage {
 
         const frontMatterText = normalized.slice(4, end).trim();
         const content = normalized.slice(end + 4).replace(/^\n/, '');
+
         return {
             frontMatter: MarkdownPage.parseYamlLikeFrontMatter(frontMatterText),
             content
@@ -75,6 +95,7 @@ export default class MarkdownPage {
             if (!value) {
                 data[key] = [];
                 currentListKey = key;
+
                 continue;
             }
 
@@ -135,11 +156,17 @@ export default class MarkdownPage {
     }
 
     get wordCount() {
-        return MarkdownPage.countWords(this.content);
+        if (this.cachedWordCount === null) {
+            this.cachedWordCount = MarkdownPage.countWords(this.content);
+        }
+        return this.cachedWordCount;
     }
 
     get readingTimeMinutes() {
-        return MarkdownPage.estimateReadingTime(this.content);
+        if (this.cachedReadingTime === null) {
+            this.cachedReadingTime = this.wordCount ? Math.max(1, Math.ceil(this.wordCount / 200)) : 0;
+        }
+        return this.cachedReadingTime;
     }
 
     get readingTimeText() {
@@ -148,7 +175,38 @@ export default class MarkdownPage {
     }
 
     toHTML() {
-        return MarkdownPage.renderMarkdown(this.content);
+        if (this.html === null) {
+            this.html = MarkdownPage.renderMarkdown(this.content);
+        }
+        return this.html;
+    }
+
+    async loadHTML() {
+        if (this.html !== null) {
+            return this.html;
+        }
+
+        try {
+            const response = await fetch(this.url, { cache: 'no-cache' });
+            if (response.ok) {
+                const document = new DOMParser().parseFromString(await response.text(), 'text/html');
+                const body = document.querySelector('.markdown-body');
+                if (body) {
+                    this.html = body.innerHTML;
+                    return this.html;
+                }
+            }
+        } catch {
+            // Fall back to the source when the generated page cannot be loaded.
+        }
+
+        const page = await MarkdownPage.fromURL(this.markdownURL);
+        this.raw = page.raw;
+        this.content = page.content;
+        this.frontMatter = page.frontMatter;
+        this.cachedWordCount = null;
+        this.cachedReadingTime = null;
+        return this.toHTML();
     }
 
     static countWords(markdown = '') {
@@ -160,11 +218,13 @@ export default class MarkdownPage {
             .replace(/<[^>]+>/g, ' ')
             .replace(/[\#>*_~|`=\-+\[\]{}()]/g, ' ');
         const words = textOnly.match(/[A-Za-z0-9]+(?:[.'-][A-Za-z0-9]+)*/g);
+        
         return words ? words.length : 0;
     }
 
     static estimateReadingTime(markdown = '', wordsPerMinute = 200) {
         const words = MarkdownPage.countWords(markdown);
+        
         return words ? Math.max(1, Math.ceil(words / wordsPerMinute)) : 0;
     }
 
@@ -196,15 +256,19 @@ export default class MarkdownPage {
             if (trimmed.startsWith('```')) {
                 closeParagraph();
                 closeList();
+
                 const lang = trimmed.slice(3).trim();
                 const codeLines = [];
+
                 i += 1;
                 while (i < lines.length && !lines[i].trim().startsWith('```')) {
                     codeLines.push(lines[i]);
                     i += 1;
                 }
+
                 html.push(`<pre><code${lang ? ` class="language-${MarkdownPage.escapeAttr(lang)}"` : ''}>${MarkdownPage.escapeHTML(codeLines.join('\n'))}</code></pre>`);
                 i += 1;
+
                 continue;
             }
 
@@ -212,27 +276,34 @@ export default class MarkdownPage {
                 closeParagraph();
                 closeList();
                 i += 1;
+
                 continue;
             }
 
             if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
                 closeParagraph();
                 closeList();
+
                 html.push('<hr>');
                 i += 1;
+
                 continue;
             }
 
             if (MarkdownPage.isTableStart(lines, i)) {
                 closeParagraph();
                 closeList();
+
                 const tableLines = [lines[i], lines[i + 1]];
                 i += 2;
+
                 while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
                     tableLines.push(lines[i]);
                     i += 1;
                 }
+
                 html.push(MarkdownPage.renderTable(tableLines));
+
                 continue;
             }
 
@@ -240,10 +311,13 @@ export default class MarkdownPage {
             if (heading) {
                 closeParagraph();
                 closeList();
+
                 const level = heading[1].length;
                 const text = MarkdownPage.renderInline(heading[2].replace(/\s+#+$/, ''));
+                
                 html.push(`<h${level}>${text}</h${level}>`);
                 i += 1;
+
                 continue;
             }
 
@@ -251,16 +325,20 @@ export default class MarkdownPage {
             if (quote) {
                 closeParagraph();
                 closeList();
+
                 const quoteLines = [];
                 while (i < lines.length) {
                     const quoteMatch = lines[i].trim().match(/^>\s?(.*)$/);
                     if (!quoteMatch) {
                         break;
                     }
+
                     quoteLines.push(quoteMatch[1]);
                     i += 1;
                 }
+
                 html.push(`<blockquote>${MarkdownPage.renderMarkdown(quoteLines.join('\n'))}</blockquote>`);
+                
                 continue;
             }
 
@@ -269,13 +347,17 @@ export default class MarkdownPage {
             if (ul || ol) {
                 closeParagraph();
                 const desired = ul ? 'ul' : 'ol';
+
                 if (listType !== desired) {
                     closeList();
+
                     listType = desired;
                     html.push(`<${listType}>`);
                 }
+
                 html.push(`<li>${MarkdownPage.renderInline((ul || ol)[1])}</li>`);
                 i += 1;
+
                 continue;
             }
 
@@ -286,12 +368,14 @@ export default class MarkdownPage {
 
         closeParagraph();
         closeList();
+
         return html.join('\n');
     }
 
     static isTableStart(lines, index) {
         const current = lines[index] || '';
         const next = lines[index + 1] || '';
+
         return current.includes('|') && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(next);
     }
 
@@ -301,6 +385,7 @@ export default class MarkdownPage {
         const aligners = splitRow(lines[1]).map((cell) => {
             if (cell.startsWith(':') && cell.endsWith(':')) return 'center';
             if (cell.endsWith(':')) return 'right';
+
             return 'left';
         });
         const rows = lines.slice(2).map(splitRow);
@@ -327,12 +412,14 @@ export default class MarkdownPage {
         text = text.replace(/!\[([^\]]*)\]\(([^\s)]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, href, title) => {
             const safeHref = MarkdownPage.safeURL(href);
             const titleAttr = title ? ` title="${MarkdownPage.escapeAttr(title)}"` : '';
+            
             return safeHref ? `<img src="${MarkdownPage.escapeAttr(safeHref)}" alt="${MarkdownPage.escapeAttr(alt)}"${titleAttr}>` : '';
         });
 
         text = text.replace(/\[([^\]]+)\]\(([^\s)]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, label, href, title) => {
             const safeHref = MarkdownPage.safeURL(href);
             const titleAttr = title ? ` title="${MarkdownPage.escapeAttr(title)}"` : '';
+            
             return safeHref ? `<a href="${MarkdownPage.escapeAttr(safeHref)}"${titleAttr}>${label}</a>` : label;
         });
 

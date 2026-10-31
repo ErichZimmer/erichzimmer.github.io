@@ -1,5 +1,20 @@
 {
     "files": [
-        "blog-openpiv-cxx-performance.md"
+        {
+            "file": "blog-openpiv-cxx-performance.html",
+            "source": "blog-openpiv-cxx-performance.md",
+            "slug": "blog-openpiv-cxx-performance",
+            "title": "Upcoming OpenPIV c++ Optimizations",
+            "date": "2026-08-09",
+            "tags": [
+                "PIV",
+                "Software",
+                "Benchmarks",
+                "Performance"
+            ],
+            "summary": "c++ optimizations to further increase the performance of OpenPIV-Python.",
+            "wordCount": 1377,
+            "readingTimeMinutes": 7
+        }
     ]
 }

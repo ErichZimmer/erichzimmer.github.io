@@ -100,6 +100,7 @@ export default class PIVCalculator {
             this.output.blurMm.textContent = '--';
             this.output.pulseS.textContent = '--';
             this.output.note.innerHTML = '<span class="warning">Enter positive FOV, resolution, and pulse length values. Max pixel blur may be zero or positive.</span>';
+            
             return;
         }
 

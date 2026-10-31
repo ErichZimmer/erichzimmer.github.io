@@ -2,39 +2,65 @@ import ComponentLoader from './ComponentLoader.js';
 import ContentCollection from './ContentCollection.js';
 import MarkdownPage from './MarkdownPage.js';
 import PIVCalculator from './PIVCalculator.js';
+import collectionConfig from './collections.js';
+import {
+    renderHomeMarkup, 
+    renderCollectionMarkup, 
+    renderArticleMarkup, 
+    contentCard
+} from './PageRenderer.js';
 
 const app = document.querySelector('#app');
-const collections = {
-    research: new ContentCollection({
-        type: 'research',
-        title: 'Research',
-        description: 'Research projects and technical notes.',
-        basePath: './pages/research'
-    }),
-    blogs: new ContentCollection({
-        type: 'blogs',
-        title: 'Blogs',
-        description: 'General blog posts.',
-        basePath: './pages/blogs'
-    })
-};
+const collections = {};
+let navigationId = 0;
+
+for (const [type, config] of Object.entries(collectionConfig)) {
+    collections[type] = new ContentCollection(config);
+}
 
 async function init() {
-    try {
-        await new ComponentLoader(document).load();
-    } catch (error) {
-        console.error(error);
-        renderError('Component loading failed', error.message);
+    if (redirectLegacyBlogURL()) {
         return;
     }
 
-    window.addEventListener('hashchange', route);
-    document.addEventListener('click', handleDocumentClick);
+    try {
+        await new ComponentLoader(document).load();
+        window.addEventListener('popstate', route);
+        window.addEventListener('hashchange', redirectLegacyBlogURL);
+        document.addEventListener('click', handleDocumentClick);
 
-    if (!window.location.hash) {
-        window.location.hash = '#/home';
-    } else {
-        route();
+        await initializePage();
+    } catch (error) {
+        console.error(error);
+        renderError('Page failed to load', error.message);
+    }
+}
+
+function redirectLegacyBlogURL() {
+    if (window.location.hash === '#/blogs/blog-openpiv-cxx-performance') {
+        window.location.replace('/pages/blogs/blog-openpiv-cxx-performance.html');
+        return true;
+    }
+
+    return false;
+}
+
+async function initializePage() {
+    if (app.dataset.rendered !== 'true') {
+        await route();
+        return;
+    }
+
+    const { page, slug } = parseRoute();
+    const currentNavigation = navigationId;
+    setActiveNav(page);
+
+    if (collections[page] && !slug) {
+        await collections[page].load();
+
+        if (currentNavigation === navigationId) {
+            bindCollectionSearch(collections[page]);
+        }
     }
 }
 
@@ -43,46 +69,68 @@ function setPageTitle(title = '') {
     document.title = title ? `${title} | ${siteName}` : siteName;
 }
 
-function parseRoute() {
-    const hash = window.location.hash.replace(/^#\/?/, '');
-    const parts = hash.split('/').filter(Boolean);
-    return {
-        page: parts[0] || 'home',
-        slug: parts[1] || ''
-    };
+function parseRoute(url = new URL(window.location.href)) {
+    const path = url.pathname;
+    if (path === '/' || path === '/index.html') {
+        return { page: 'home', slug: '' };
+    }
+
+    const section = path.match(/^\/(research|blogs|piv-utilities)\.html$/);
+    if (section) {
+        return { page: section[1], slug: '' };
+    }
+
+    const article = path.match(/^\/pages\/(research|blogs)\/([^/]+)\.html$/);
+    if (article) {
+        return { page: article[1], slug: decodeURIComponent(article[2]) };
+    }
+
+    return { page: 'not-found', slug: path };
+}
+
+function navigate(url) {
+    if (url.href === window.location.href) {
+        return;
+    }
+
+    window.history.pushState(null, '', url);
+    route();
 }
 
 async function route() {
+    const currentNavigation = ++navigationId;
     const { page, slug } = parseRoute();
+
     setActiveNav(page);
     app.focus({ preventScroll: true });
 
     try {
         if (page === 'home') {
-            renderHome();
+            setPageTitle('Home');
+            app.innerHTML = renderHomeMarkup();
+
             return;
         }
 
-        if (page === 'research') {
-            await renderCollectionPage('research', slug);
-            return;
-        }
-
-        if (page === 'blogs') {
-            await renderCollectionPage('blogs', slug);
+        if (collections[page]) {
+            await renderCollectionPage(page, slug, currentNavigation);
+            
             return;
         }
 
         if (page === 'piv-utilities') {
             setPageTitle('PIV Utilities');
             new PIVCalculator(app).render();
+
             return;
         }
 
-        renderNotFound(page);
+        renderNotFound(slug);
     } catch (error) {
-        console.error(error);
-        renderError('Page failed to render', error.message);
+        if (currentNavigation === navigationId) {
+            console.error(error);
+            renderError('Page failed to render', error.message);
+        }
     }
 }
 
@@ -95,97 +143,75 @@ function setActiveNav(page) {
 
 function handleDocumentClick(event) {
     const reset = event.target.closest('[data-reset-search]');
+
     if (reset) {
         const input = document.querySelector('#content-search');
+
         if (input) {
             input.value = '';
             input.dispatchEvent(new Event('input'));
         }
+
+        return;
     }
+
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+        return;
+    }
+
+    if (link.hasAttribute('download') || (link.target && link.target !== '_self')) {
+        return;
+    }
+
+    const url = new URL(link.href);
+    if (url.origin !== window.location.origin || url.hash || parseRoute(url).page === 'not-found') {
+        return;
+    }
+
+    event.preventDefault();
+    navigate(url);
 }
 
-function renderHome() {
-    setPageTitle('Home');
-    app.innerHTML = `
-        <section class="center-zone">
-            <article class="panel hero">
-                <p class="eyebrow">Home</p>
-                <h1>Research, blogs, and PIV utilities.</h1>
-            </article>
-
-            <section class="home-grid" aria-label="Site sections">
-                ${homeCard('#/research', 'Research', 'Project summaries and technical research.')}
-                ${homeCard('#/blogs', 'Blogs', 'General posts, updates, and notes.')}
-                ${homeCard('#/piv-utilities', 'PIV Utilities', 'Calculator for maximum allowable velocity from FOV, resolution, blur, and pulse length.')}
-            </section>
-
-            <article class="panel">
-                <div class="panel-body">
-                    <h2>About</h2>
-                    <p>
-                        I am a graduate in computer science with a focus on 
-                        machine learning and ethics. I am also a research 
-                        enthusiast and love electrical engineering and fluid 
-                        dynamics. This has led to efforts on my behalf to design 
-                        and construct open source and low-cost hardware and 
-                        software to further my self-studies along with those 
-                        who suffer from stingent funding allocations. More 
-                        information on these projects can be seen in the research 
-                        page along with some miscellaneous information in the
-                        blog page.
-                    </p>
-                </div>
-            </article>
-        </section>`;
-}
-
-function homeCard(href, title, description) {
-    return `
-        <a class="card" href="${href}">
-            <p class="eyebrow">Open</p>
-            <h2>${escapeHTML(title)}</h2>
-            <p>${escapeHTML(description)}</p>
-        </a>`;
-}
-
-async function renderCollectionPage(type, slug = '') {
+async function renderCollectionPage(type, slug, currentNavigation) {
     const collection = collections[type];
-
-    if (!collection.items.length) {
+    if (!collection.loaded) {
         await collection.load();
     }
 
+    if (currentNavigation !== navigationId) {
+        return;
+    }
+
     if (slug) {
-        renderArticle(collection, slug);
+        const item = collection.getBySlug(slug);
+
+        if (!item) {
+            renderNotFound(slug);
+            return;
+        }
+
+        const bodyHTML = await item.loadHTML();
+
+        if (currentNavigation !== navigationId) {
+            return;
+        }
+
+        setPageTitle(item.title);
+        app.innerHTML = renderArticleMarkup(collection, item, bodyHTML);
+
         return;
     }
 
     setPageTitle(collection.title);
-    const listHTML = collection.items.map((item) => contentCard(collection.type, item)).join('');
+    app.innerHTML = renderCollectionMarkup(collection);
+    bindCollectionSearch(collection);
+}
 
-    app.innerHTML = `
-        <section class="center-zone">
-            <article class="panel page-title">
-                <p class="eyebrow">${escapeHTML(collection.title)}</p>
-                <h1>${escapeHTML(collection.title)}</h1>
-                <p>${escapeHTML(collection.description)}</p>
-            </article>
-
-            <article class="panel">
-                <div class="toolbar">
-                    <strong>${collection.items.length} markdown ${collection.items.length === 1 ? 'file' : 'files'}</strong>
-                    <input id="content-search" class="search-input" type="search" placeholder="Search title, date, or tags" aria-label="Search ${escapeHTML(collection.title)}">
-                </div>
-                <div class="panel-body">
-                    <section id="content-list" class="card-grid" aria-label="${escapeHTML(collection.title)} list">
-                        ${listHTML || '<p class="empty-state">No markdown files were found. Add files to the manifest for this section.</p>'}
-                    </section>
-                </div>
-            </article>
-        </section>`;
-
+function bindCollectionSearch(collection) {
     const searchInput = document.querySelector('#content-search');
     const list = document.querySelector('#content-list');
+    
     searchInput.addEventListener('input', () => {
         const query = searchInput.value.trim().toLowerCase();
         const filtered = collection.items.filter((item) => {
@@ -194,66 +220,9 @@ async function renderCollectionPage(type, slug = '') {
         });
 
         list.innerHTML = filtered.length
-            ? filtered.map((item) => contentCard(collection.type, item)).join('')
+            ? filtered.map((item) => contentCard(item)).join('')
             : `<p class="empty-state">No items match this search. <button type="button" data-reset-search>Clear search</button></p>`;
     });
-}
-
-function contentCard(type, item) {
-    const tags = item.tags.map((tag) => `<li class="tag">${escapeHTML(tag)}</li>`).join('');
-    return `
-        <a class="content-card" href="#/${type}/${encodeURIComponent(item.slug)}" data-title="${escapeAttr(item.title)}">
-            <div class="meta-row">
-                ${renderMetaParts(item)}
-            </div>
-            <h2>${escapeHTML(item.title)}</h2>
-            ${item.summary ? `<p>${escapeHTML(item.summary)}</p>` : ''}
-            ${tags ? `<ul class="tag-list">${tags}</ul>` : ''}
-        </a>`;
-}
-
-function renderMetaParts(item, { includeWordCount = false } = {}) {
-    const parts = [formatDate(item.date) || 'Undated'];
-
-    if (item.readingTimeText) {
-        parts.push(item.readingTimeText);
-    }
-
-    if (includeWordCount && item.wordCount) {
-        parts.push(`${formatNumber(item.wordCount)} words`);
-    }
-
-    return parts
-        .map((part) => `<span>${escapeHTML(part)}</span>`)
-        .join('<span aria-hidden="true">·</span>');
-}
-
-function renderArticle(collection, slug) {
-    const item = collection.getBySlug(decodeURIComponent(slug));
-    if (!item) {
-        renderNotFound(slug);
-        return;
-    }
-
-    setPageTitle(item.title);
-    const tags = item.tags.map((tag) => `<li class="tag">${escapeHTML(tag)}</li>`).join('');
-    app.innerHTML = `
-        <section class="center-zone">
-            <article class="panel article">
-                <header class="article-header">
-                    <a class="back-link" href="#/${collection.type}">← Back to ${escapeHTML(collection.title)}</a>
-                    <p class="eyebrow">${escapeHTML(collection.title)}</p>
-                    <h1>${escapeHTML(item.title)}</h1>
-                    <div class="meta-row">
-                        ${renderMetaParts(item, { includeWordCount: true })}
-                    </div>
-                    ${tags ? `<ul class="tag-list">${tags}</ul>` : ''}
-                </header>
-                <section class="markdown-body">
-                    ${item.toHTML()}
-                </section>
-            </article>
-        </section>`;
 }
 
 function renderNotFound(label = '') {
@@ -264,8 +233,8 @@ function renderNotFound(label = '') {
                 <div class="panel-body">
                     <p class="eyebrow">404</p>
                     <h1>Page not found</h1>
-                    <p>The route <code>${escapeHTML(label)}</code> could not be found.</p>
-                    <p><a class="back-link" href="#/home">Return home</a></p>
+                    <p>The route <code>${MarkdownPage.escapeHTML(label)}</code> could not be found.</p>
+                    <p><a class="back-link" href="/">Return home</a></p>
                 </div>
             </article>
         </section>`;
@@ -278,36 +247,11 @@ function renderError(title, message) {
             <article class="panel">
                 <div class="panel-body">
                     <p class="eyebrow">Error</p>
-                    <h1>${escapeHTML(title)}</h1>
-                    <p>${escapeHTML(message)}</p>
+                    <h1>${MarkdownPage.escapeHTML(title)}</h1>
+                    <p>${MarkdownPage.escapeHTML(message)}</p>
                 </div>
             </article>
         </section>`;
-}
-
-function formatDate(value = '') {
-    if (!value) {
-        return '';
-    }
-
-    const date = new Date(`${value}T00:00:00`);
-    if (Number.isNaN(date.getTime())) {
-        return value;
-    }
-
-    return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
-}
-
-function formatNumber(value = 0) {
-    return new Intl.NumberFormat(undefined).format(value);
-}
-
-function escapeHTML(value = '') {
-    return MarkdownPage.escapeHTML(value);
-}
-
-function escapeAttr(value = '') {
-    return MarkdownPage.escapeAttr(value);
 }
 
 init();

@@ -1,7 +1,47 @@
 {
     "files": [
-        "project-openpiv.md",
-        "project-opensync.md",
-        "project-future.md"
+        {
+            "file": "project-future.html",
+            "source": "project-future.md",
+            "slug": "project-future",
+            "title": "Future Projects",
+            "date": "2026-06-24",
+            "tags": [
+                "PIV",
+                "Hardware",
+                "Software"
+            ],
+            "summary": "Future projects for PIV hardware and software.",
+            "wordCount": 959,
+            "readingTimeMinutes": 5
+        },
+        {
+            "file": "project-opensync.html",
+            "source": "project-opensync.md",
+            "slug": "project-opensync",
+            "title": "OpenSync - World's First Open Source, Open Hardware PIV Synchronizer [WIP]",
+            "date": "2026-06-21",
+            "tags": [
+                "PIV",
+                "Hardware"
+            ],
+            "summary": "OpenSync - World's first open source, open hardware PIV synchronizer with great performance at a low cost.",
+            "wordCount": 609,
+            "readingTimeMinutes": 4
+        },
+        {
+            "file": "project-openpiv.html",
+            "source": "project-openpiv.md",
+            "slug": "project-openpiv",
+            "title": "OpenPIV - Free and Open Source PIV Software",
+            "date": "2026-06-18",
+            "tags": [
+                "PIV",
+                "Software"
+            ],
+            "summary": "OpenPIV - Providing free and performant open source PIV software to researchers for over a decade.",
+            "wordCount": 168,
+            "readingTimeMinutes": 1
+        }
     ]
 }

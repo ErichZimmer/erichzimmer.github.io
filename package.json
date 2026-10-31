@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "render": "node scripts/render-pages.mjs",
+        "preview": "node scripts/preview.mjs",
+        "test": "node --test"
+    }
+}

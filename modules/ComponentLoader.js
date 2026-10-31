@@ -4,13 +4,13 @@ export default class ComponentLoader {
     }
 
     async load() {
-        const slots = [...this.root.querySelectorAll('[data-component]')];
+        const slots = [...this.root.querySelectorAll('[data-component]')].filter((slot) => !slot.innerHTML.trim());
         await Promise.all(slots.map((slot) => this.loadSlot(slot)));
     }
 
     async loadSlot(slot) {
         const name = slot.dataset.component;
-        const response = await fetch(`./components/${name}.html`, { cache: 'no-cache' });
+        const response = await fetch(`/components/${name}.html`, { cache: 'no-cache' });
 
         if (!response.ok) {
             throw new Error(`Unable to load component: ${name}`);

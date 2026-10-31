@@ -8,15 +8,17 @@ export default class ContentCollection {
         this.basePath = basePath;
         this.items = [];
         this.manifest = { files: [] };
+        this.loaded = false;
     }
 
     async load() {
         await this.loadManifest();
         const files = Array.isArray(this.manifest.files) ? this.manifest.files : [];
-        const pages = await Promise.all(files.map((file) => this.loadMarkdown(file)));
-        this.items = pages
-            .filter(Boolean)
+        this.items = files
+            .map((file) => MarkdownPage.fromMetadata(file, this.basePath))
             .sort((a, b) => String(b.date).localeCompare(String(a.date)) || a.title.localeCompare(b.title));
+        this.loaded = true;
+        
         return this.items;
     }
 
@@ -24,21 +26,10 @@ export default class ContentCollection {
         const response = await fetch(`${this.basePath}/index.json`, { cache: 'no-cache' });
 
         if (!response.ok) {
-            throw new Error(`Could not load ${this.basePath}/index.json. Add a manifest listing markdown files.`);
+            throw new Error(`Could not load ${this.basePath}/index.json.`);
         }
 
         this.manifest = await response.json();
-    }
-
-    async loadMarkdown(file) {
-        const fileName = typeof file === 'string' ? file : file.file;
-        if (!fileName) {
-            return null;
-        }
-
-        const page = await MarkdownPage.fromURL(`${this.basePath}/${fileName}`);
-        page.slug = page.slug || fileName.replace(/\.(md|markdown)$/i, '');
-        return page;
     }
 
     getBySlug(slug) {
