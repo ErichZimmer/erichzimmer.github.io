@@ -1,7 +1,6 @@
-# Erich Zimmer
+# Personal Website
 
-The site uses static HTML pages generated from Markdown. Collection metadata is
-stored in `pages/research/index.json` and `pages/blogs/index.json`.
+The site uses static HTML pages generated from Markdown. Collection metadata is stored in `pages/research/index.json` and `pages/blogs/index.json`.
 
 Use Node.js 22 or newer. There are no dependencies to install.
 
@@ -11,9 +10,7 @@ Render the articles and site pages:
 npm run render
 ```
 
-Each Markdown file gets a complete HTML page beside it with the same basename.
-The renderer also updates collection metadata and tiles. Run it again after
-editing Markdown, components, or the shared templates in `modules/PageRenderer.js`.
+Each Markdown file gets a complete HTML page beside it with the same basename. The renderer also updates collection metadata and tiles. Run it again after editing Markdown, components, or the shared templates in `modules/PageRenderer.js`.
 
 Render a single collection:
 
@@ -27,9 +24,7 @@ Passing a Markdown filename also refreshes its containing collection and metadat
 npm run render -- pages/research/project-opensync.md
 ```
 
-The rendering functions can also be imported directly. `renderMarkdownFile()`
-writes one HTML file and returns its metadata; `renderCollection()` updates a
-collection and its manifest; `renderSite()` renders everything.
+The rendering functions can also be imported directly. `renderMarkdownFile()` writes one HTML file and returns its metadata, `renderCollection()` updates a collection and its manifest, and `renderSite()` renders everything.
 
 ```js
 import { renderMarkdownFile } from './scripts/render-pages.mjs';
@@ -51,12 +46,6 @@ npm run preview -- 8080
 
 Run the content checks with `npm test` after rendering.
 
-Article links use their `.html` paths. The original
-`/#/blogs/blog-openpiv-cxx-performance` link redirects to the corresponding HTML
-page. During navigation, a missing generated article falls back to its Markdown
-source. `404.html` provides the same fallback for direct visits, with HTTP status
-404 until the HTML file is generated.
+Article links use their mostly use their `.html` paths. A backwards compatible hased URL (`/#/blogs/blog-openpiv-cxx-performance`) was created due to it being referenced on LinkedIn and simply redirects to the HTML page. During navigation, a missing generated article may fall back to its Markdown source with the cost of added latency.
 
-Generated HTML and manifests are included in the repository. Render and commit
-them along with source changes before pushing. Automatic rendering in GitHub
-Actions has not been configured.
+Generated HTML and manifests are included in the repository. Render and commit them along with source changes before pushing. Automatic rendering in GitHub
