@@ -82,7 +82,7 @@ To analyze the performance of the new enhancements to the c++ version of OpenPIV
 | Batch 8 | Displacement test | 0.020 noise; 0-5 pixels displacement |
 | Batch 9 | Displacement test | 0.025 noise; 0-5 pixels displacement |
 
-During the tests, some amends were made. For one, particle diameters had a standard deviation of zero for test batches one through three so minimize variables. Batches four to nine still have a standard deviation of one pixel (e.g., particle sizes of 3 +/- 1 pixels). Finally, particle loss was removed from the noise tests due to certain concerns observed during the results, which seemed to not be a problem.
+During the tests, some amends were made. For one, particle diameters had a standard deviation of zero for test batches one through three to minimize variables. Batches four to nine still have a standard deviation of one pixel (e.g., particle sizes of 3 +/- 1 pixels). Finally, particle loss was removed from the noise tests due to certain concerns observed during the results, which seemed to not be a problem.
 
 ## PIV Settings
 Note: No preprocessing or postprocessing was done on any image pair.
@@ -114,7 +114,7 @@ OpenPIV (circular)
 | Interpolation | Lagrange (k=3) |
 | Deformation Order | 2 (symmetric) |
 
-OpenPIV (linear)
+OpenPIV (linear and robust)
 | Setting | Value |
 | --- | --- |
 | IW Sizes | 64 -> 32 -> 24 |
