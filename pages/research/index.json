@@ -42,6 +42,20 @@
             "summary": "OpenPIV - Providing free and performant open source PIV software to researchers for over a decade.",
             "wordCount": 168,
             "readingTimeMinutes": 1
+        },
+        {
+            "file": "research-psychedelic-treatment.html",
+            "source": "research-psychedelic-treatment.md",
+            "slug": "research-psychedelic-treatment",
+            "title": "On the Legalization and Decriminalization of Psychedelic Substances in the United States",
+            "date": "2023-06-20",
+            "tags": [
+                "Medication",
+                "Treatment"
+            ],
+            "summary": "Psychedelic substances have the possiblity of treating mental conditions without the risks associated with Amphetamines. By legalizing psychedelics for medical use, it opens a whole new market for effective treatment for those who are in need. This paper satisfies English II of university",
+            "wordCount": 3266,
+            "readingTimeMinutes": 17
         }
     ]
 }

@@ -380,6 +380,7 @@ img {
 .markdown-body a {
     color: #1f66ff;
     font-weight: 650;
+    overflow-wrap: anywhere;
 }
 
 .markdown-body pre {
