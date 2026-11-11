@@ -36,3 +36,6 @@ OpenCapture is an open source PIV image aquisition software that uses camera and
 
 ### OpenSeeder
 OpenSeeder is a low cost air/helium filled soap bubble generator that targets small seed particle ranging from 120 microns to 1 mm. Using air instead of helium, the cost to operate this seed generator can be reduced at the expense of higher particle time responses (and hence, a focus placed on smaller soap bubbles). A microcontroller simplifies bubble generation based on presets and user configurations. 
+
+### OpenWindTunnel
+Open wind tunnel is a low-cost wind tunnel designed for air flow studies. Constructed from craft foam, acrylic sheets, and honeycomb from light louvers (guides), it provides relatively low turbulence (expected to be < 0.8%) and a test volume of 60 xm x 40 cm x 40 cm (LxWxH). Powered using a 12 V DC fans meant for vehicle radiators, it provides free stream velocities of up to 10 m/s. For an expected construction cost of around $200 USD, this wind tunnel will be excellent for hobbiest and undergraduate studies alike.
