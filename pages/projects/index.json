@@ -1,0 +1,19 @@
+{
+    "files": [
+        {
+            "file": "opensync.html",
+            "source": "opensync.md",
+            "slug": "opensync",
+            "title": "OpenSync",
+            "date": "2026-11-12",
+            "tags": [
+                "PIV",
+                "Hardware"
+            ],
+            "summary": "An open source, open hardware synchronizer for particle image velocimetry (PIV).",
+            "externalUrl": "https://erichz.net/OpenSync",
+            "wordCount": 17,
+            "readingTimeMinutes": 1
+        }
+    ]
+}

@@ -1,6 +1,20 @@
 {
     "files": [
         {
+            "file": "llm-assisted-engineering.html",
+            "source": "llm-assisted-engineering.md",
+            "slug": "llm-assisted-engineering",
+            "title": "LLM-assisted Engineering",
+            "date": "2026-10-31",
+            "tags": [
+                "Software",
+                "AI"
+            ],
+            "summary": "Using LLMs to bolster research output in a responsible manner.",
+            "wordCount": 214,
+            "readingTimeMinutes": 2
+        },
+        {
             "file": "blog-openpiv-cxx-performance.html",
             "source": "blog-openpiv-cxx-performance.md",
             "slug": "blog-openpiv-cxx-performance",

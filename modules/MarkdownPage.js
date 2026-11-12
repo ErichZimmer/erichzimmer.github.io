@@ -155,6 +155,11 @@ export default class MarkdownPage {
         return this.frontMatter.summary || this.frontMatter.description || '';
     }
 
+    get externalUrl() {
+        const url = this.frontMatter.externalUrl;
+        return typeof url === 'string' && /^https?:\/\//i.test(url) ? url : '';
+    }
+
     get wordCount() {
         if (this.cachedWordCount === null) {
             this.cachedWordCount = MarkdownPage.countWords(this.content);

@@ -1,6 +1,6 @@
 # Personal Website
 
-The site uses static HTML pages generated from Markdown. Collection metadata is stored in `pages/research/index.json` and `pages/blogs/index.json`.
+The site uses static HTML pages generated from Markdown. Collection metadata is stored in `pages/research/index.json`, `pages/blogs/index.json`, and `pages/projects/index.json`.
 
 Use Node.js 22 or newer. There are no dependencies to install.
 
@@ -11,6 +11,24 @@ npm run render
 ```
 
 Each Markdown file gets a complete HTML page beside it with the same basename. The renderer also updates collection metadata and tiles. Run it again after editing Markdown, components, or the shared templates in `modules/PageRenderer.js`.
+
+To add a project, create a Markdown file in `pages/projects/` using the same front matter as research and blog posts:
+
+```markdown
+---
+title: My Project
+date: 2026-11-12
+tags: [Hardware, Software]
+summary: A short description of the project.
+---
+# Overview
+
+Project details go here.
+```
+
+Run `npm run render` to generate its article page and add it to the searchable Projects collection at `/projects.html`.
+
+To link a tile directly to a project website, add `externalUrl: https://example.com/project` to its front matter. The tile uses this address in both generated pages and browser navigation.
 
 Render a single collection:
 

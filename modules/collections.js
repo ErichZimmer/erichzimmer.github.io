@@ -10,5 +10,11 @@ export default {
         title: 'Blogs',
         description: 'General blog posts.',
         basePath: '/pages/blogs'
+    },
+    projects: {
+        type: 'projects',
+        title: 'Projects',
+        description: 'Open source hardware and software projects.',
+        basePath: '/pages/projects'
     }
 };

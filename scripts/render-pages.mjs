@@ -42,6 +42,7 @@ export async function renderMarkdownFile(markdownPath, components = null) {
         date: page.date,
         tags: page.tags,
         summary: page.summary,
+        ...(page.externalUrl ? { externalUrl: page.externalUrl } : {}),
         wordCount: page.wordCount,
         readingTimeMinutes: page.readingTimeMinutes
     };
@@ -90,7 +91,7 @@ export async function renderSite() {
 
     await writeFile(resolve(siteRoot, 'index.html'), renderHTMLDocument({
         title: 'Home',
-        description: 'A static GitHub Pages site for research, blogs, and PIV utilities.',
+        description: 'A static GitHub Pages site for research, blogs, projects, and PIV utilities.',
         content: renderHomeMarkup(),
         components
     }), 'utf8');

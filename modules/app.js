@@ -75,12 +75,12 @@ function parseRoute(url = new URL(window.location.href)) {
         return { page: 'home', slug: '' };
     }
 
-    const section = path.match(/^\/(research|blogs|piv-utilities)\.html$/);
+    const section = path.match(/^\/(research|blogs|projects|piv-utilities)\.html$/);
     if (section) {
         return { page: section[1], slug: '' };
     }
 
-    const article = path.match(/^\/pages\/(research|blogs)\/([^/]+)\.html$/);
+    const article = path.match(/^\/pages\/(research|blogs|projects)\/([^/]+)\.html$/);
     if (article) {
         return { page: article[1], slug: decodeURIComponent(article[2]) };
     }

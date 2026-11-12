@@ -39,12 +39,13 @@ export function renderHomeMarkup() {
         <section class="center-zone">
             <article class="panel hero">
                 <p class="eyebrow">Home</p>
-                <h1>Research, blogs, and PIV utilities.</h1>
+                <h1>Research, blogs, projects, and PIV utilities.</h1>
             </article>
 
             <section class="home-grid" aria-label="Site sections">
                 ${homeCard('/research.html', 'Research', 'Project summaries and technical research.')}
                 ${homeCard('/blogs.html', 'Blogs', 'General posts, updates, and notes.')}
+                ${homeCard('/projects.html', 'Projects', 'Open source hardware and software projects.')}
                 ${homeCard('/piv-utilities.html', 'PIV Utilities', 'Calculator for maximum allowable velocity from FOV, resolution, blur, and pulse length.')}
             </section>
 
@@ -104,7 +105,7 @@ export function renderCollectionMarkup(collection) {
 export function contentCard(item) {
     const tags = item.tags.map((tag) => `<li class="tag">${escapeHTML(tag)}</li>`).join('');
     return `
-        <a class="content-card" href="${escapeAttr(item.url)}" data-title="${escapeAttr(item.title)}">
+        <a class="content-card" href="${escapeAttr(item.externalUrl || item.url)}" data-title="${escapeAttr(item.title)}">
             <div class="meta-row">
                 ${renderMetaParts(item)}
             </div>
