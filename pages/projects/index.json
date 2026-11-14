@@ -1,6 +1,21 @@
 {
     "files": [
         {
+            "file": "openpiv.html",
+            "source": "openpiv.md",
+            "slug": "openpiv",
+            "title": "OpenPIV-Python",
+            "date": "2026-11-12",
+            "tags": [
+                "PIV",
+                "Software"
+            ],
+            "summary": "An open source software for digital particle image velocimetry (PIV).",
+            "externalUrl": "https://github.com/OpenPIV/openpiv-python",
+            "wordCount": 24,
+            "readingTimeMinutes": 1
+        },
+        {
             "file": "opensync.html",
             "source": "opensync.md",
             "slug": "opensync",
